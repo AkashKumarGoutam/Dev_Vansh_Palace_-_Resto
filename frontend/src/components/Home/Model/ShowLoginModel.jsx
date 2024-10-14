@@ -7,36 +7,70 @@ const GetStartModel = ({ closeGetModel }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const validateInputs = () => {
+    if (!email || !password || (!showAuth && !name)) {
+      alert("Please fill in all fields");
+      return false;
+    }
+    // Basic email format check
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address");
+      return false;
+    }
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters long");
+      return false;
+    }
+    return true;
+  };
 
-  const handleRegister= async(e)=>{
+  const handleRegister = async (e) => {
     e.preventDefault();
-      await axios.post("http://localhost:3001/auth/create_account" , {name , email , password})
-      .then(res=>{
-        console.log(res.data);
-        alert("Register successful")
-        closeGetModel();      
-        navigate("/")
-      }).catch(err=>{
-        console.log(err);        
-      })
-  }
+    if (!validateInputs()) return;
 
-
-  const handleLogin = async () => {
+    setLoading(true); // Start loading
     try {
-      const res = await axios.post("http://localhost:3001/auth/login_account", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        "http://localhost:3001/auth/create_account",
+        { name, email, password },
+        { withCredentials: true }
+      );
       console.log(res.data);
-      navigate("/"); 
+      alert("Register successful");
+      closeGetModel();
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      alert("Error during registration, please try again.");
+    } finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!validateInputs()) return;
+
+    setLoading(true); // Start loading
+    try {
+      const res = await axios.post(
+        "http://localhost:3001/auth/login_account",
+        { email, password },
+        { withCredentials: true }
+      );
+      console.log(res.data);
       alert("Login successful");
-      closeGetModel();      
+      navigate("/");
+      closeGetModel();
     } catch (error) {
       console.log(error);
-      alert("Error fetching details, please check the inputs");
+      alert("Error during login, please check your credentials");
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -82,7 +116,7 @@ const GetStartModel = ({ closeGetModel }) => {
         </h1>
 
         {showAuth ? (
-          <div>
+          <form onSubmit={handleLogin}>
             <h1 className="flex text-xl font-bold underline justify-center">
               Login
             </h1>
@@ -108,15 +142,16 @@ const GetStartModel = ({ closeGetModel }) => {
             </div>
             <div className="flex justify-center">
               <button
-                onClick={handleLogin}
+                type="submit"
                 className="bg-blue-800 p-2 rounded-lg text-white"
+                disabled={loading}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
             </div>
-          </div>
+          </form>
         ) : (
-          <div>
+          <form onSubmit={handleRegister}>
             <h1 className="flex text-xl font-bold underline justify-center">
               Create Account
             </h1>
@@ -152,13 +187,14 @@ const GetStartModel = ({ closeGetModel }) => {
             </div>
             <div className="flex justify-center">
               <button
-              onClick={handleRegister}
+                type="submit"
                 className="bg-blue-800 p-2 rounded-lg text-white"
+                disabled={loading}
               >
-                Submit
+                {loading ? "Registering..." : "Submit"}
               </button>
             </div>
-          </div>
+          </form>
         )}
 
         <button

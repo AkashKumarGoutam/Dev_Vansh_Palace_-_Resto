@@ -14,8 +14,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+}, {
+    timestamps: true, // Automatically handle createdAt and updatedAt fields
 });
 
-const userModel = mongoose.model("Authentication", userSchema);
+const userModel = mongoose.model("User", userSchema);
 
 module.exports = userModel;
