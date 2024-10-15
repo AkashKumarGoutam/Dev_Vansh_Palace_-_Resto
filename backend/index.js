@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const connectDB = require("./database/db");
 const dotenv = require("dotenv");
+const bookDatesRoutes = require("./routes/bookDatesRoutes")
 dotenv.config(); 
 
 const app = express();
@@ -24,6 +25,7 @@ connectDB();
 
 // Authentication Routes
 app.use("/auth", authRoutes);
+app.use("/booking" , bookDatesRoutes)
 
 // Start the server
 app.listen(PORT, () => {

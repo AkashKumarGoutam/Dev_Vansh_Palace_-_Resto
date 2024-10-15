@@ -20,7 +20,6 @@ function Navbar({ scrollToSection }) {
           <button onClick={() => scrollToSection('services')} className='text-sm hover:text-indigo-500 transition duration-300 font-semibold uppercase hover:underline'>Services</button>
           <button onClick={() => scrollToSection('contact')} className='text-sm hover:text-blue-500 transition duration-300 font-semibold uppercase hover:underline'>Contact</button>
           <button onClick={() => scrollToSection('about')} className='text-sm hover:text-red-500 transition duration-300 font-semibold uppercase hover:underline'>About</button>
-          <button className='text-sm hover:text-indigo-500 transition duration-300 font-semibold uppercase hover:underline'>Logout</button>
         </div>
         </div>
         
