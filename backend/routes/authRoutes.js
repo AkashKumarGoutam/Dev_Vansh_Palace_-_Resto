@@ -57,7 +57,7 @@ router.post("/login_account", async (req, res) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign({ username: check_user.username, email: check_user.email }, JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ name: check_user.name, email: check_user.email }, JWT_SECRET, { expiresIn: "1h" });
 
         // Store token in cookies
         res.cookie('token', token, {
@@ -67,7 +67,10 @@ router.post("/login_account", async (req, res) => {
             secure: process.env.NODE_ENV === 'production', // Set to true in production
         });
 
-        return res.status(httpStatus.OK).json({ message: "Login successful" });
+        return res.status(httpStatus.OK).json({
+            message: "Login successful",
+            username: check_user.name, 
+        });
     } catch (error) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ message: "Error during login", error });
     }

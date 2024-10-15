@@ -18,6 +18,6 @@ const userSchema = new mongoose.Schema({
     timestamps: true, // Automatically handle createdAt and updatedAt fields
 });
 
-const userModel = mongoose.model("User", userSchema);
+const userModel = mongoose.model("users", userSchema);
 
 module.exports = userModel;

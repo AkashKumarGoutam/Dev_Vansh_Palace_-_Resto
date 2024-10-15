@@ -10,6 +10,9 @@ const GetStartModel = ({ closeGetModel }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  axios.defaults.withCredentials= true
+
+
   const validateInputs = () => {
     if (!email || !password || (!showAuth && !name)) {
       alert("Please fill in all fields");
@@ -36,8 +39,8 @@ const GetStartModel = ({ closeGetModel }) => {
     try {
       const res = await axios.post(
         "http://localhost:3001/auth/create_account",
-        { name, email, password },
-        { withCredentials: true }
+        { name, email, password }
+        // { withCredentials: true }
       );
       console.log(res.data);
       alert("Register successful");
@@ -59,13 +62,14 @@ const GetStartModel = ({ closeGetModel }) => {
     try {
       const res = await axios.post(
         "http://localhost:3001/auth/login_account",
-        { email, password },
-        { withCredentials: true }
+        { email, password }
+        // { withCredentials: true }
       );
       console.log(res.data);
       alert("Login successful");
       navigate("/");
       closeGetModel();
+      localStorage.setItem("username", res.data.username);
     } catch (error) {
       console.log(error);
       alert("Error during login, please check your credentials");
@@ -138,6 +142,7 @@ const GetStartModel = ({ closeGetModel }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-gray-300 px-2 py-3 font-semibold rounded-lg"
+                autoComplete="current-password"
               />
             </div>
             <div className="flex justify-center">

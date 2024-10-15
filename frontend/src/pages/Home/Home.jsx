@@ -1,18 +1,57 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Home.css";
+import axios from "axios"; 
 import backgroundImage from "../../assets/hero-img.jpg";
-import scrollImg from "../../assets/arrow.png"
+import scrollImg from "../../assets/arrow.png";
 import GetStartModel from "../../components/Home/Model/ShowLoginModel";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 
 function Home() {
   const [showGetStart, setShowGetStart] = useState(false);
+  const [username, setUsername] = useState(null);
+
   const closeGetModel = () => setShowGetStart(false);
 
-  const topScroll = ()=>{
-    window.scrollTo(0,0)
+  const topScroll = () => {
+    window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
+    // Retrieve username from localStorage when component mounts
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+
+// Inside your Home component
+const handleLogout = async () => {
+  try {
+    // Send a request to the backend to logout using axios
+    const response = await axios.post("http:localhost:3001/auth/logout",      {
+        withCredentials: true, // Ensure the cookie is sent with the request
+      }
+    );
+
+    if (response.status === 200) {
+      // Clear localStorage
+      localStorage.removeItem("username");
+
+      // Clear the state
+      setUsername(null);
+
+      // Optionally, you can redirect the user to the home or login page
+      window.location.href = "/"; // Redirect to home after logout
+    } else {
+      console.error("Logout failed");
+    }
+  } catch (error) {
+    console.error("Error during logout:", error);
   }
+};
+
 
   // Refs for sections
   const homeRef = useRef(null);
@@ -20,7 +59,6 @@ function Home() {
   const servicesRef = useRef(null);
   const contactRef = useRef(null);
   const aboutRef = useRef(null);
-  
 
   // Function to handle scrolling
   const scrollToSection = (section) => {
@@ -41,7 +79,7 @@ function Home() {
     <div className="">
       <Navbar scrollToSection={scrollToSection} />
 
-      {/* hero section */}
+      {/* Hero section */}
       <div
         ref={homeRef}
         style={{
@@ -56,7 +94,7 @@ function Home() {
         }}
       >
         <div className="flex flex-col justify-center text-gray-300 items-center">
-          <h1 className="lg:text-5xl pl-12 lg:pl-0 text-4xl font-bold ">
+          <h1 className="lg:text-5xl pl-12 lg:pl-0 text-4xl font-bold">
             Welcome to <span className="text-black">Deo Vansh</span>
             <span className="text-yellow-400"> Palace</span>
           </h1>
@@ -64,12 +102,26 @@ function Home() {
             Los delectus dignissimos laborum inventore amet, numquam eaque
             accusantium doloribus non perferendis modi sed?
           </p>
-          <button
-            onClick={() => setShowGetStart(true)}
-            className="bg-blue-800 p-2 rounded-lg hover:bg-black transition duration-300"
-          >
-            Get Started
-          </button>
+
+          {username ? (
+            <div className="flex flex-col justify-center items-center">
+            <h2 className="text-4xl font-bold uppercase text-black">Welcome, {username}!</h2>
+            <button
+              className="bg-blue-800 p-2 rounded-lg hover:bg-black transition duration-300"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowGetStart(true)}
+              className="bg-blue-800 p-2 rounded-lg hover:bg-black transition duration-300"
+            >
+              Get Started
+            </button>
+          )}
+
           {showGetStart && <GetStartModel closeGetModel={closeGetModel} />}
         </div>
       </div>
