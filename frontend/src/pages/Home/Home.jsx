@@ -23,7 +23,7 @@ function Home() {
     if (storedUsername) {
       setUsername(storedUsername);
     }
-  }, []);
+  }, [showGetStart , username]);
 
 
 
@@ -52,7 +52,7 @@ function Home() {
 
   return (
     <div className="">
-      <Navbar scrollToSection={scrollToSection} />
+      <Navbar scrollToSection={scrollToSection} username={username} setUsername={setUsername} />
 
       {/* Hero section */}
       <div

@@ -77,7 +77,7 @@ router.post("/login_account", async (req, res) => {
 });
 
 // POST: Logout and clear token from cookies
-router.post("/logout", (req, res) => {
+router.get("/logout", (req, res) => {
     res.clearCookie("token");
     return res.status(httpStatus.OK).json({ message: "Logout successful" });
 });
