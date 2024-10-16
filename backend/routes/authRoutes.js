@@ -83,20 +83,24 @@ router.get("/logout", (req, res) => {
 });
 
 // Protected Route example
-router.get("/protected", (req, res) => {
-    const token = req.cookies.token;
-
-    if (!token) {
-        return res.status(httpStatus.FORBIDDEN).send({ message: "No token provided." });
-    }
-
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(httpStatus.UNAUTHORIZED).send({ message: "Failed to authenticate token." });
+const verifyUser = async (req,res,next)=>{
+    try{
+        const token = req.cookies.token;
+        if(!token){
+            return res.json({status: false , message:"no token available"})
         }
+        const decoded = await jwt.verify(token , JWT_SECRET);
+        next();
+        }
+        catch(err){
+            return res.json(err);
+        }
+}
+///////////set route with middleware (verifyUser)///////
+router.get('/verify_user' , verifyUser , (req,res)=>{
+return res.json({status:true , message:"authorized"})
+})
 
-        return res.status(httpStatus.OK).send({ message: "Access granted to protected route", user: decoded });
-    });
-});
+
 
 module.exports = router;
